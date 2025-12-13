@@ -42,7 +42,7 @@ class DataCoder {
 
         FileMeta EncodeFile(std::ifstream& input_file, std::ofstream& output_file) const;
 
-        void DecodeFile(std::ifstream& input_file, std::ofstream& output_file, uint32_t start_size) const;
+        void DecodeFile(std::istream& input_file, std::ostream& output_file, uint32_t start_size) const;
 };
 
 class MetaCoder {

@@ -43,9 +43,9 @@ FileMeta DataCoder::EncodeFile(std::ifstream& input_file, std::ofstream& output_
     return meta;
 }
 
-void DataCoder::DecodeFile(std::ifstream& input_file, std::ofstream& output_file, uint32_t start_size) const {
+void DataCoder::DecodeFile(std::istream& input_file, std::ostream& output_file, uint32_t start_size) const {
     
-    int encoded_size = (hamming_.GetN() + kByte - 2) / kByte;
+    int encoded_size = (hamming_.GetN() + kByte - 1) / kByte;
     
     std::vector<char> input(encoded_size, 0);
     uint32_t new_bytes = 0;
