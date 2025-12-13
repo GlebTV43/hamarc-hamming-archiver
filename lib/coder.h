@@ -2,9 +2,10 @@
 
 #include "hamming.h"
 
-#include <vector>
 #include <fstream>
 #include <cstdint>
+#include <vector>
+#include <cstring>
 
 const size_t kMaxFileNameSize = 256;
 const size_t kEncodedBytes = 2;
