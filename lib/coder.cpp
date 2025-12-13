@@ -50,8 +50,7 @@ void DataCoder::DecodeFile(std::ifstream& input_file, std::ofstream& output_file
     std::vector<char> input(encoded_size, 0);
     uint32_t new_bytes = 0;
     
-    while (new_bytes < start_size) {
-        input_file.read(input.data(), encoded_size);
+    while (input_file.read(input.data(), encoded_size) && new_bytes < start_size) {
  
         std::vector<char> decoded_block = hamming_.DecodeBlock(input);
 
