@@ -11,7 +11,7 @@ const size_t kMaxFileNameSize = 256;
 const size_t kEncodedBytes = 2;
 const int kOne = 1;
 
-#pragma pack(push, 1);
+#pragma pack(push, 1)
 struct FileMeta {
     char file_name[kMaxFileNameSize];
     uint64_t original_size;
@@ -19,7 +19,8 @@ struct FileMeta {
     uint64_t data_offset;
     uint64_t next_meta_offset;
 };
-
+const size_t kMetaSize = sizeof(FileMeta);
+const size_t kEncodedMetaSize = kMetaSize * kEncodedBytes;
 
 struct Header {
     char archive_name[kMaxFileNameSize];
@@ -27,13 +28,9 @@ struct Header {
     uint64_t files_count;
     uint64_t last_offset;
 };
-#pragma pack(pop)
-
-const size_t kMetaSize = sizeof(FileMeta);
-const size_t kEncodedMetaSize = kMetaSize * kEncodedBytes;
-
 const size_t kHeaderSize = sizeof(Header);
 const size_t kEncodedHeaderSize = kHeaderSize * kEncodedBytes;
+#pragma pack(pop)
 
 class DataCoder {
     private:
