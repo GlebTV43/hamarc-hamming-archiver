@@ -11,7 +11,7 @@ const size_t kMaxFileNameSize = 256;
 const size_t kEncodedBytes = 2;
 const int kOne = 1;
 
-
+#pragma pack(push, 1);
 struct FileMeta {
     char file_name[kMaxFileNameSize];
     uint64_t original_size;
@@ -27,8 +27,6 @@ struct Header {
     uint64_t files_count;
     uint64_t last_offset;
 };
-
-
 #pragma pack(pop)
 
 const size_t kMetaSize = sizeof(FileMeta);
