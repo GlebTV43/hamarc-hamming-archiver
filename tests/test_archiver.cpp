@@ -8,10 +8,15 @@
 #include <cstdlib>
 #include <cstdint>
 #include <cstring>
+#include <ios>
+#include <chrono>
+#include <algorithm>
+#include <exception>
+#include <iostream>
 
 namespace fs = std::filesystem;
 
-static std::string quote_path(const fs::path& p) {
+static std::string QuotePath(const fs::path& p) {
 	fs::path native_path = p;
 	native_path.make_preferred();
 	std::string s = native_path.string();
@@ -25,7 +30,7 @@ static std::string quote_path(const fs::path& p) {
 #endif
 }
 
-static bool filesEqual(const fs::path& a, const fs::path& b) {
+static bool FilesEqual(const fs::path& a, const fs::path& b) {
 	if (!fs::exists(a) || !fs::exists(b)) return false;
 	if (fs::file_size(a) != fs::file_size(b)) return false;
 
@@ -48,29 +53,29 @@ static bool filesEqual(const fs::path& a, const fs::path& b) {
 }
 
 TEST(HamArcCLI, CreateAndExtractAndCompare) {
-	const fs::path resourcesDir = fs::path(RESOURCES_DIR);
-	const fs::path file1 = resourcesDir / "BjarneStroustrup.jpg";
-	const fs::path file2 = resourcesDir / "Book.pdf";
+	const fs::path resourse_dir = fs::path(RESOURCES_DIR);
+	const fs::path file1 = resourse_dir / "BjarneStroustrup.jpg";
+	const fs::path file2 = resourse_dir / "Book.pdf";
 
 	ASSERT_TRUE(fs::exists(file1));
 	ASSERT_TRUE(fs::exists(file2));
 
-	const auto tempRoot = fs::temp_directory_path();
+	const auto temp_root = fs::temp_directory_path();
 	const auto now = std::chrono::steady_clock::now().time_since_epoch().count();
-	const fs::path work = tempRoot / ("hamarc_test_" + std::to_string(now));
-	const fs::path outDir = work / "out";
-	ASSERT_TRUE(fs::create_directories(outDir));
+	const fs::path work = temp_root / ("hamarc_test_" + std::to_string(now));
+	const fs::path out_dir = work / "out";
+	ASSERT_TRUE(fs::create_directories(out_dir));
 
 	const fs::path archive = work / "archive.haf";
 	const std::string hamarc = HAMARC_EXE_PATH;
 
 	{
 		std::ostringstream cmd;
-		cmd << quote_path(hamarc)
+		cmd << QuotePath(hamarc)
 		    << " --create"
-		    << " --file=" << quote_path(archive)
-		    << " " << quote_path(file1)
-		    << " " << quote_path(file2);
+		    << " --file=" << QuotePath(archive)
+		    << " " << QuotePath(file1)
+		    << " " << QuotePath(file2);
 		std::cout << "Create command: " << cmd.str() << std::endl;
 		const int rc = std::system(cmd.str().c_str());
 		std::cout << "Return code: " << rc << std::endl;
@@ -107,23 +112,23 @@ TEST(HamArcCLI, CreateAndExtractAndCompare) {
 
 	{
 		const fs::path original_dir = fs::current_path();
-		fs::current_path(outDir);
+		fs::current_path(out_dir);
 		
 		std::ostringstream cmd;
-		cmd << quote_path(hamarc)
+		cmd << QuotePath(hamarc)
 		    << " --extract"
-		    << " --file=" << quote_path(fs::path("..") / archive.filename());
+		    << " --file=" << QuotePath(fs::path("..") / archive.filename());
 		const int rc = std::system(cmd.str().c_str());
 		
 		fs::current_path(original_dir);
 		ASSERT_EQ(rc, 0);
 	}
 
-	const fs::path extr1 = outDir / file1.filename();
-	const fs::path extr2 = outDir / file2.filename();
+	const fs::path extr1 = out_dir / file1.filename();
+	const fs::path extr2 = out_dir / file2.filename();
 	ASSERT_TRUE(fs::exists(extr1));
 	ASSERT_TRUE(fs::exists(extr2));
 
-	EXPECT_TRUE(filesEqual(file1, extr1));
-	EXPECT_TRUE(filesEqual(file2, extr2));
+	EXPECT_TRUE(FilesEqual(file1, extr1));
+	EXPECT_TRUE(FilesEqual(file2, extr2));
 }
