@@ -11,7 +11,7 @@
 
 DataCoder::DataCoder(int encoding_k) : encoding_k_(encoding_k), hamming_(encoding_k) {}
 
-FileMeta DataCoder::EncodeFile(std::ifstream& input_file, std::ofstream& output_file) const {
+FileMeta DataCoder::EncodeFile(std::istream& input_file, std::ostream& output_file) const {
     
     FileMeta meta;
 

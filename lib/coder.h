@@ -40,7 +40,7 @@ class DataCoder {
     public:
         explicit DataCoder(int data_bytes);
 
-        FileMeta EncodeFile(std::ifstream& input_file, std::ofstream& output_file) const;
+        FileMeta EncodeFile(std::istream& input_file, std::ostream& output_file) const;
 
         void DecodeFile(std::istream& input_file, std::ostream& output_file, uint32_t start_size) const;
 };
