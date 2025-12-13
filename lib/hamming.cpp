@@ -1,6 +1,8 @@
 #include "hamming.h"
+
 #include <iostream>
 #include <vector>
+#include <exception>
 
 HammingCoder::HammingCoder(int bytes) : k_(bytes * kByte) {
     // std::cerr << "DEBUG HammingCoder: bytes=" << bytes << ", k_=" << k_ << std::endl;

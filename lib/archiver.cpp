@@ -10,6 +10,7 @@
 #include <vector>
 #include <stdexcept>
 #include <cstdint>
+#include <cstdio>
 
 namespace {
     static const std::size_t kCopyBuffer = 64 * 1024;
