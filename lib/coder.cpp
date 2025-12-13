@@ -52,11 +52,6 @@ void DataCoder::DecodeFile(std::ifstream& input_file, std::ofstream& output_file
     
     while (new_bytes < start_size) {
         input_file.read(input.data(), encoded_size);
-        
-        if (input_file.gcount() < encoded_size) {
-            std::fill(input.begin() + input_file.gcount(), 
-                     input.end(), 0);
-        }
  
         std::vector<char> decoded_block = hamming_.DecodeBlock(input);
 
@@ -68,9 +63,6 @@ void DataCoder::DecodeFile(std::ifstream& input_file, std::ofstream& output_file
         output_file.write(decoded_block.data(), bytes_to_write);
         new_bytes += bytes_to_write;
         
-        if (input_file.gcount() < encoded_size) {
-            break;
-        }
     }
 }
 
