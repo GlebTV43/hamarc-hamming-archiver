@@ -47,7 +47,7 @@ void DataCoder::DecodeFile(std::istream& input_file, std::ostream& output_file, 
     
     int encoded_size = (hamming_.GetN() + kByte - 1) / kByte;
     
-    std::vector<char> input(encoded_size, 0);
+    std::vector<char> input(encoded_size);
     uint32_t new_bytes = 0;
     
     while (input_file.read(input.data(), encoded_size) && new_bytes < start_size) {
