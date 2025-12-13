@@ -150,12 +150,6 @@ void HammingArchiver::AddFile(const std::string &archive_path, const std::string
 void HammingArchiver::ExtractFile(const std::string &archive_path, const std::string &file_name) {
     ArchiveInit(archive_path);
     
-    std::ifstream archive(archive_path, std::ios::binary);
-    if (!archive) {
-        std::cerr << "ExtractFile: cannot open archive: '" << archive_path << "'";
-        return;
-    }
-    
     std::string target_filename = std::filesystem::path(file_name).filename().string();
     bool found = false;
     
@@ -165,15 +159,16 @@ void HammingArchiver::ExtractFile(const std::string &archive_path, const std::st
         if (std::string(file_meta.file_name) == target_filename) {
             found = true;
             
-            archive.clear();
-            archive.seekg(static_cast<std::streamoff>(file_meta.data_offset));
-            
+            std::ifstream archive(archive_path, std::ios::binary);
+
             if (!archive) {
                 std::cerr << "ExtractFile: failed to seek to data offset for file '" 
                           << file_meta.file_name << "'";
                 continue;
             }
-            
+
+            archive.seekg(file_meta.data_offset);
+
             std::ofstream out(file_meta.file_name, std::ios::binary);
             if (!out) {
                 std::cerr << "ExtractFile: cannot create output file: '" 
@@ -181,15 +176,9 @@ void HammingArchiver::ExtractFile(const std::string &archive_path, const std::st
                 continue;
             }
             
-            DataCoder decoder(static_cast<int>(header_.encoding_k));
+            DataCoder decoder(header_.encoding_k);
             decoder.DecodeFile(archive, out, file_meta.original_size);
-            
-            out.flush();
-            if (!out) {
-                std::cerr << "ExtractFile: failed to write file '" 
-                          << file_meta.file_name << "'";
-            }
-            
+
             break;
         }
     }
@@ -202,25 +191,16 @@ void HammingArchiver::ExtractFile(const std::string &archive_path, const std::st
 void HammingArchiver::ExtractAllFiles(const std::string &archive_path) {
     ArchiveInit(archive_path);
     
-    std::ifstream archive(archive_path, std::ios::binary);
-    if (!archive) {
-        std::cerr << "ExtractAllFiles: cannot open archive: '" << archive_path << "'";
-        return;
-    }
-    
-    DataCoder decoder(static_cast<int>(header_.encoding_k));
-    
     for (std::size_t i = 0; i < meta_.size(); ++i) {
         const FileMeta& file_meta = meta_[i];
-        
-        archive.clear();
-        archive.seekg(static_cast<std::streamoff>(file_meta.data_offset));
-        
+
+        std::ifstream archive(archive_path, std::ios::binary);
         if (!archive) {
-            std::cerr << "ExtractAllFiles: failed to seek to data offset for file '" 
-                      << file_meta.file_name << "'";
-            continue;
+            std::cerr << "ExtractAllFiles: cannot open archive: '" << archive_path << "'";
+            return;
         }
+        
+        archive.seekg(file_meta.data_offset);
         
         std::ofstream out(file_meta.file_name, std::ios::binary);
         if (!out) {
@@ -229,13 +209,8 @@ void HammingArchiver::ExtractAllFiles(const std::string &archive_path) {
             continue;
         }
         
+        DataCoder decoder(header_.encoding_k);
         decoder.DecodeFile(archive, out, file_meta.original_size);
-        
-        out.flush();
-        if (!out) {
-            std::cerr << "ExtractAllFiles: failed to write file '" 
-                      << file_meta.file_name << "'";
-        }
     }
 }
 
