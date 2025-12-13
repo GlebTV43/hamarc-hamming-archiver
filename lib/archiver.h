@@ -24,7 +24,7 @@ public:
     void CreateArchive(const std::string& archive_path, int encoding_k);
     void AddFile(const std::string& archive_path, const std::string& file_path);
     void DeleteFile(const std::string& archive_path, const std::string file_path);
-    void ExtractFile(const std::string& archive_path, const std::string file_path);
+    void ExtractFile(const std::string& archive_path, const std::string& file_path);
     void ExtractAllFiles(const std::string& archive_path);
     void ListOfFiles(const std::string& archive_path);
     void MergeTwoArchives(const std::string& archive_path1, const std::string& archive_path2, const std::string& new_merged_archive_path);

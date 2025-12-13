@@ -10,9 +10,9 @@
 #include <cstring>
 #include <ios>
 #include <chrono>
-#include <algorithm>
 #include <exception>
 #include <iostream>
+#include <utility>
 
 namespace fs = std::filesystem;
 
@@ -38,8 +38,8 @@ static bool FilesEqual(const fs::path& a, const fs::path& b) {
 	std::ifstream fb(b, std::ios::binary);
 	if (!fa || !fb) return false;
 
-	const std::size_t kBufferSize = 1 << 20;
-	std::vector<char> ba(kBufferSize), bb(kBufferSize);
+	const std::size_t buffer_size = 1 << 20;
+	std::vector<char> ba(buffer_size), bb(buffer_size);
 
 	while (fa && fb) {
 		fa.read(ba.data(), static_cast<std::streamsize>(ba.size()));

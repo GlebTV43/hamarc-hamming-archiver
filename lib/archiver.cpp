@@ -147,55 +147,95 @@ void HammingArchiver::AddFile(const std::string &archive_path, const std::string
     meta_.push_back(final_meta);
 }
 
-void HammingArchiver::ExtractFile(const std::string &archive_path, const std::string file_path) {
+void HammingArchiver::ExtractFile(const std::string &archive_path, const std::string &file_name) {
     ArchiveInit(archive_path);
-    std::string file_name = ExtractFilename(file_path);
-
-    int idx = FindFileIndex(file_name);
-    if (idx == -1) {
-        std::cerr << "ExtractFile: '" << file_name << "' not found in archive";
-        return;
-    }
-
+    
     std::ifstream archive(archive_path, std::ios::binary);
     if (!archive) {
         std::cerr << "ExtractFile: cannot open archive: '" << archive_path << "'";
         return;
     }
-
-    FileMeta file_meta = meta_[static_cast<std::size_t>(idx)];
-    archive.seekg(static_cast<std::streamoff>(file_meta.data_offset));
-
-    std::ofstream out(file_meta.file_name, std::ios::binary | std::ios::trunc);
-    if (!out) {
-        std::cerr << "ExtractFile: cannot create output file: " << file_meta.file_name << "'";
-        return;
+    
+    std::string target_filename = std::filesystem::path(file_name).filename().string();
+    bool found = false;
+    
+    for (std::size_t i = 0; i < meta_.size(); ++i) {
+        const FileMeta& file_meta = meta_[i];
+        
+        if (std::string(file_meta.file_name) == target_filename) {
+            found = true;
+            
+            archive.clear();
+            archive.seekg(static_cast<std::streamoff>(file_meta.data_offset));
+            
+            if (!archive) {
+                std::cerr << "ExtractFile: failed to seek to data offset for file '" 
+                          << file_meta.file_name << "'";
+                continue;
+            }
+            
+            std::ofstream out(file_meta.file_name, std::ios::binary | std::ios::trunc);
+            if (!out) {
+                std::cerr << "ExtractFile: cannot create output file: '" 
+                          << file_meta.file_name << "'";
+                continue;
+            }
+            
+            DataCoder decoder(static_cast<int>(header_.encoding_k));
+            decoder.DecodeFile(archive, out, file_meta.original_size);
+            
+            out.flush();
+            if (!out) {
+                std::cerr << "ExtractFile: failed to write file '" 
+                          << file_meta.file_name << "'";
+            }
+            
+            break;
+        }
     }
-
-    DataCoder decoder(static_cast<int>(header_.encoding_k));
-    decoder.DecodeFile(archive, out, file_meta.original_size);
+    
+    if (!found) {
+        std::cerr << "ExtractFile: file '" << target_filename << "' not found in archive";
+    }
 }
 
 void HammingArchiver::ExtractAllFiles(const std::string &archive_path) {
     ArchiveInit(archive_path);
+    
     std::ifstream archive(archive_path, std::ios::binary);
     if (!archive) {
-        std::cerr << "ExtractAllFiles: cannot open archive: " << archive_path << "'";
+        std::cerr << "ExtractAllFiles: cannot open archive: '" << archive_path << "'";
         return;
     }
-
+    
     DataCoder decoder(static_cast<int>(header_.encoding_k));
+    
     for (std::size_t i = 0; i < meta_.size(); ++i) {
-        FileMeta file_meta = meta_[i];
+        const FileMeta& file_meta = meta_[i];
+        
+        archive.clear();
         archive.seekg(static_cast<std::streamoff>(file_meta.data_offset));
-
-        std::ofstream out(file_meta.file_name, std::ios::binary | std::ios::trunc);
-        if (!out) {
-            std::cerr << "ExtractAllFiles: failed to create '" << file_meta.file_name << "'";
+        
+        if (!archive) {
+            std::cerr << "ExtractAllFiles: failed to seek to data offset for file '" 
+                      << file_meta.file_name << "'";
             continue;
         }
-
+        
+        std::ofstream out(file_meta.file_name, std::ios::binary | std::ios::trunc);
+        if (!out) {
+            std::cerr << "ExtractAllFiles: failed to create '" 
+                      << file_meta.file_name << "'";
+            continue;
+        }
+        
         decoder.DecodeFile(archive, out, file_meta.original_size);
+        
+        out.flush();
+        if (!out) {
+            std::cerr << "ExtractAllFiles: failed to write file '" 
+                      << file_meta.file_name << "'";
+        }
     }
 }
 
