@@ -174,7 +174,7 @@ void HammingArchiver::ExtractFile(const std::string &archive_path, const std::st
                 continue;
             }
             
-            std::ofstream out(file_meta.file_name, std::ios::binary | std::ios::trunc);
+            std::ofstream out(file_meta.file_name, std::ios::binary);
             if (!out) {
                 std::cerr << "ExtractFile: cannot create output file: '" 
                           << file_meta.file_name << "'";
@@ -222,7 +222,7 @@ void HammingArchiver::ExtractAllFiles(const std::string &archive_path) {
             continue;
         }
         
-        std::ofstream out(file_meta.file_name, std::ios::binary | std::ios::trunc);
+        std::ofstream out(file_meta.file_name, std::ios::binary);
         if (!out) {
             std::cerr << "ExtractAllFiles: failed to create '" 
                       << file_meta.file_name << "'";
