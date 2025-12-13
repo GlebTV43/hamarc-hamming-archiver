@@ -117,4 +117,4 @@ int GetRepeatedCount(ArgumentParser& parser, const char* argument_name);
 
 bool GetRepeated(ArgumentParser& parser, const char* argument_name, int value_index, void* value);
 
-}
+} // end of nargparse

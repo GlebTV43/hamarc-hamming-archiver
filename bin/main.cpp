@@ -5,11 +5,7 @@
 #include <string>
 #include <vector>
 
-bool validateEncodingK(const int& k) {
-    return k >= 1 && k <= 8;
-}
-
-bool validatePositiveInt(const int& n) {
+bool ValidatePositiveInt(const int& n) {
     return n > 0;
 }
 
@@ -39,7 +35,7 @@ int main(int argc, const char* argv[]) {
         
         int encoding_k = 3;
         nargparse::AddArgument(parser, "-k", "--encoding", &encoding_k, "encoding_k", 
-                              nargparse::kNargsOptional, validateEncodingK, 
+                              nargparse::kNargsOptional, ValidatePositiveInt, 
                               "encoding parameter k (1-8)");
         
 
