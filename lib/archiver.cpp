@@ -8,10 +8,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdexcept>
+#include <cstdint>
 
 namespace {
     static const std::size_t kCopyBuffer = 64 * 1024;
-}
+} // namespace
 
 inline std::string HammingArchiver::ExtractFilename(const std::string &file_path) const {
     std::filesystem::path p(file_path);

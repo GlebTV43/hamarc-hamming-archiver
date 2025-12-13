@@ -521,4 +521,4 @@ bool GetRepeated(ArgumentParser& parser, const char* name, int value_index, void
     return false;
 }
 
-} // end of nargparse
+} // nargparse

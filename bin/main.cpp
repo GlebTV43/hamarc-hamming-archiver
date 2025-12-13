@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <exception>
 
 bool ValidatePositiveInt(const int& n) {
     return n > 0;

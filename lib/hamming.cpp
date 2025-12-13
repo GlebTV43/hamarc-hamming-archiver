@@ -6,7 +6,7 @@ HammingCoder::HammingCoder(int bytes) : k_(bytes * kByte) {
     // std::cerr << "DEBUG HammingCoder: bytes=" << bytes << ", k_=" << k_ << std::endl;
     
     if (bytes <= 0) {
-        throw std::invalid_argument("bytes must be positive");
+        std::cerr << ("bytes must be positive");
     }
     
     CalculateParameters();
