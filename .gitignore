@@ -48,3 +48,17 @@ build
 
 # debug information files
 *.dwo
+
+# Local build output and credentials
+/build/
+/cmake-build-*/
+/.vscode/
+/.idea/
+.env
+.env.*
+!.env.example
+*apikey*.txt
+*api_key*.txt
+!*.example.txt
+*.pem
+*.key
